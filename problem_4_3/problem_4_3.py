@@ -7,7 +7,7 @@ from torch.utils.tensorboard import SummaryWriter
 from problem_4_3.utils import *
 from problem_4_3.models import *
 
-writer = SummaryWriter("runs/mnist")
+writer = SummaryWriter("runs/autoencoder")
 
 num_epochs = 15
 batch_size = 128
@@ -40,10 +40,10 @@ optimizer = torch.optim.Adam(
 
 auto_path = "autoencoder.pth"
 
-#model = train_autoencoder(model, criterion, optimizer, num_epochs, trainloader, 'autoencoder', auto_path, writer)
-#test_autoencoder(valloader, model, "./test_autoencoder")
-#sys.exit()
+model = train_autoencoder(model, criterion, optimizer, num_epochs, trainloader, 'autoencoder', auto_path, writer)
+test_autoencoder(valloader, model, "./test_autoencoder")
 writer = SummaryWriter("runs/regular_classifier")
+
 # Regular Classifier
 classify_model = Linearclassifier()
 
