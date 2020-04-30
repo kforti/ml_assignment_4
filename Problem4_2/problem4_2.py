@@ -13,6 +13,7 @@ from tensorflow import keras
 import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
+import time
 
 # let's keep our keras backend tensorflow quiet
 import os
@@ -49,6 +50,7 @@ print("Shape before one-hot encoding: ", y_train.shape)
 Y_train = np_utils.to_categorical(y_train, n_classes)
 Y_test = np_utils.to_categorical(y_test, n_classes)
 print("Shape after one-hot encoding: ", Y_train.shape)
+print()
 
 # building a linear stack of layers with the sequential model
 model = Sequential()
@@ -62,15 +64,15 @@ model.add(Dropout(0.2))
 
 model.add(Dense(100, activation='relu', kernel_initializer='glorot_normal'))
 model.add(BatchNormalization())
-model.add(Dropout(0.2))
-
-model.add(Dense(100, activation='relu', kernel_initializer='glorot_normal'))
-model.add(BatchNormalization())
-model.add(Dropout(0.2))
-
-model.add(Dense(100, activation='relu', kernel_initializer='glorot_normal'))
-model.add(BatchNormalization())
 # model.add(Dropout(0.2))
+
+model.add(Dense(100, activation='relu', kernel_initializer='glorot_normal'))
+model.add(BatchNormalization())
+model.add(Dropout(0.2))
+
+model.add(Dense(100, activation='relu', kernel_initializer='glorot_normal'))
+model.add(BatchNormalization())
+model.add(Dropout(0.2))
 
 model.add(Dense(100, activation='relu', kernel_initializer='glorot_normal'))
 model.add(BatchNormalization())
@@ -88,14 +90,24 @@ es = EarlyStopping(monitor='val_loss', mode='min', verbose=2, patience=10)
 mc = ModelCheckpoint('best_model.h5', monitor='val_accuracy', mode='max', verbose=1, save_best_only=True)
 
 # training the model and saving metrics in history
+trainstart = time.time()
 history = model.fit(X_train, Y_train, batch_size=128, epochs=60, verbose=2, validation_data=(X_test, Y_test), callbacks=[es, mc])
+trainstop = time.time()
+train_time = trainstop - trainstart
+print('Total training time: ' + str(train_time))
+
 
 # # saving the model
 model.save('keras_mnist.h5')
 
 mnist_model = load_model('best_model.h5')
+teststart = time.time()
 loss_and_metrics = mnist_model.evaluate(X_test, Y_test, verbose=2)
+teststop = time.time()
+test_time = teststop - teststart
+print('Total test time: ' + str(test_time))
 
+print()
 print("Test Loss", loss_and_metrics[0])
 print("Test Accuracy", loss_and_metrics[1])
 
